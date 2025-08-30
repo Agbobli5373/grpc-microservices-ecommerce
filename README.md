@@ -60,8 +60,8 @@ This project demonstrates a modern microservices architecture with three indepen
 1. **Clone and navigate to the repository**
 
    ```bash
-   git clone <repository-url>
-   cd ecommerce-microservices-poc
+   git clone https://github.com/Agbobli5373/grpc-microservices-ecommerce.git
+   cd grpc-microservices-ecommerce
    ```
 
 2. **Build and start all services**
