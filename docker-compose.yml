@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  product-service:
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./product-service/data:/app/data
+    networks:
+      - ecommerce-network
+    depends_on:
+      - product-service-init
+
+  product-service-init:
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+    command: python -c "from app.database import init_db; init_db()"
+    volumes:
+      - ./product-service/data:/app/data
+    networks:
+      - ecommerce-network
+
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    ports:
+      - "50052:50052"
+    volumes:
+      - ./order-service/data:/app/data
+    networks:
+      - ecommerce-network
+    depends_on:
+      - product-service
+      - order-service-init
+
+  order-service-init:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    command: python -c "from app.database import init_db; init_db()"
+    volumes:
+      - ./order-service/data:/app/data
+    networks:
+      - ecommerce-network
+    depends_on:
+      - product-service
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - ecommerce-network
+    depends_on:
+      - product-service
+      - order-service
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+volumes:
+  product-data:
+  order-data:

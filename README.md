@@ -1,4 +1,4 @@
-```markdown
+
 # Ecommerce Microservices POC — Product + Order + API Gateway
 
 Overview
@@ -42,4 +42,3 @@ Notes
 - api-gateway listens on 8000 and calls both services.
 - For simplicity each service contains a copy of the proto files and generates its own proto_gen at build time. For production you would publish versioned proto artifacts or share proto_gen as a package.
 - Replace SQLite with Postgres and add migrations for production workloads.
-```
