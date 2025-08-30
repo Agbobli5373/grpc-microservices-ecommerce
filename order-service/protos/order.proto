@@ -1,3 +1,14 @@
+// Order Service Protobuf Definition
+//
+// This file defines the gRPC service for managing customer orders.
+// The OrderService handles order creation with automatic product validation
+// and price calculation by communicating with the ProductService.
+//
+// Key features:
+// - Validates product existence before order creation
+// - Automatically calculates total price (product.price * quantity)
+// - Maintains order data persistence in SQLite database
+
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
@@ -8,28 +19,62 @@ option java_multiple_files = true;
 option java_package = "com.example.order";
 option java_outer_classname = "OrderProto";
 
+// OrderService provides gRPC endpoints for order management.
+// This service owns order data and coordinates with ProductService
+// for product validation and pricing information.
 service OrderService {
+  // ListOrders retrieves all orders from the system.
+  // Returns an empty list if no orders exist.
   rpc ListOrders (google.protobuf.Empty) returns (ListOrdersResponse);
+
+  // GetOrder retrieves a specific order by its unique ID.
+  // Returns NOT_FOUND error if order doesn't exist.
   rpc GetOrder (GetOrderRequest) returns (Order);
+
+  // CreateOrder creates a new order after validating the product.
+  // Validates product exists, calculates total price, and creates order.
+  // Returns NOT_FOUND if product doesn't exist.
+  // Returns INVALID_ARGUMENT for invalid input data.
   rpc CreateOrder (CreateOrderRequest) returns (Order);
 }
 
+// Order represents a customer order in the system.
+// Contains order details including product reference and calculated pricing.
 message Order {
+  // Unique identifier for the order (UUID format)
   string id = 1;
+
+  // Reference to the product being ordered (must exist in ProductService)
   string product_id = 2;
+
+  // Quantity of the product ordered (required, must be greater than 0)
   int32 quantity = 3;
+
+  // Total price calculated as product.price * quantity (auto-calculated)
   double total_price = 4;
 }
 
+// ListOrdersResponse contains a list of all orders.
+// Used as the response for the ListOrders RPC call.
 message ListOrdersResponse {
+  // Array of order objects
   repeated Order orders = 1;
 }
 
+// GetOrderRequest specifies which order to retrieve.
+// Used as the request for the GetOrder RPC call.
 message GetOrderRequest {
+  // Unique identifier of the order to retrieve (required)
   string id = 1;
 }
 
+// CreateOrderRequest contains data for creating a new order.
+// Used as the request for the CreateOrder RPC call.
+// Note: total_price is calculated automatically by the service.
 message CreateOrderRequest {
+  // Product ID to order (required, must exist in ProductService)
   string product_id = 1;
+
+  // Quantity to order (required, must be greater than 0)
   int32 quantity = 2;
 }

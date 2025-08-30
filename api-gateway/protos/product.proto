@@ -1,3 +1,12 @@
+// Product Service Protobuf Definition
+//
+// This file defines the gRPC service for managing product catalog.
+// The ProductService provides CRUD operations for products with
+// validation and data persistence through SQLite database.
+//
+// Generated stubs are used by both the product-service (server)
+// and other services that need to interact with products.
+
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
@@ -8,29 +17,63 @@ option java_multiple_files = true;
 option java_package = "com.example.product";
 option java_outer_classname = "ProductProto";
 
+// ProductService provides gRPC endpoints for product management.
+// This service owns the product data and handles all product-related
+// operations including creation, retrieval, and listing.
 service ProductService {
+  // ListProducts retrieves all products from the catalog.
+  // Returns an empty list if no products exist.
   rpc ListProducts (google.protobuf.Empty) returns (ListProductsResponse);
+
+  // GetProduct retrieves a specific product by its unique ID.
+  // Returns NOT_FOUND error if product doesn't exist.
   rpc GetProduct (GetProductRequest) returns (Product);
+
+  // CreateProduct creates a new product in the catalog.
+  // Validates input data and returns the created product with generated ID.
+  // Returns INVALID_ARGUMENT error for invalid input data.
   rpc CreateProduct (CreateProductRequest) returns (Product);
 }
 
+// Product represents a product in the catalog.
+// Contains all essential product information including pricing.
 message Product {
+  // Unique identifier for the product (UUID format)
   string id = 1;
+
+  // Product name (required, non-empty)
   string name = 2;
+
+  // Detailed product description (required, non-empty)
   string description = 3;
+
+  // Product price in USD (required, must be greater than 0)
   double price = 4;
 }
 
+// ListProductsResponse contains a list of all products.
+// Used as the response for the ListProducts RPC call.
 message ListProductsResponse {
+  // Array of product objects
   repeated Product products = 1;
 }
 
+// GetProductRequest specifies which product to retrieve.
+// Used as the request for the GetProduct RPC call.
 message GetProductRequest {
+  // Unique identifier of the product to retrieve (required)
   string id = 1;
 }
 
+// CreateProductRequest contains data for creating a new product.
+// Used as the request for the CreateProduct RPC call.
 message CreateProductRequest {
+  // Product name (required, non-empty string)
   string name = 1;
+
+  // Product description (required, non-empty string)
   string description = 2;
+
+  // Product price in USD (required, must be greater than 0)
   double price = 3;
 }
