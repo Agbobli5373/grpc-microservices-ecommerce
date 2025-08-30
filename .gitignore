@@ -1,0 +1,12 @@
+.github
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+
+TODO.md
+IMPLEMENTATION_PLAN.md
